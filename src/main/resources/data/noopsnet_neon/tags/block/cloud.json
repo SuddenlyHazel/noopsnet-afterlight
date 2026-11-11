@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "noopsnet_neon:cyan_cloud",
+    "noopsnet_neon:pink_cloud",
+    "noopsnet_neon:violet_cloud",
+    "noopsnet_neon:amber_cloud",
+    "noopsnet_neon:lime_cloud",
+    "noopsnet_neon:ice_cloud"
+  ]
+}

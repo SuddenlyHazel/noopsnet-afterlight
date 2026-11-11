@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "noopsnet_neon:cyan_blade",
+    "noopsnet_neon:pink_blade",
+    "noopsnet_neon:violet_blade",
+    "noopsnet_neon:amber_blade",
+    "noopsnet_neon:lime_blade",
+    "noopsnet_neon:ice_blade"
+  ]
+}

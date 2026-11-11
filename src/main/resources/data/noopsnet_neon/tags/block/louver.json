@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "noopsnet_neon:cyan_louver",
+    "noopsnet_neon:pink_louver",
+    "noopsnet_neon:violet_louver",
+    "noopsnet_neon:amber_louver",
+    "noopsnet_neon:lime_louver",
+    "noopsnet_neon:ice_louver"
+  ]
+}

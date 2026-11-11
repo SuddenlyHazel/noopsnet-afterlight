@@ -1,0 +1,19 @@
+{
+  "type": "minecraft:crafting_shapeless",
+  "category": "misc",
+  "ingredients": [
+    {
+      "item": "minecraft:stick"
+    },
+    {
+      "item": "minecraft:glow_ink_sac"
+    },
+    {
+      "tag": "c:dyes"
+    }
+  ],
+  "result": {
+    "id": "noopsnet_neon:palette",
+    "count": 1
+  }
+}

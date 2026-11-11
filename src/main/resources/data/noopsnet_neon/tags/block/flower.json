@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "noopsnet_neon:cyan_flower",
+    "noopsnet_neon:pink_flower",
+    "noopsnet_neon:violet_flower",
+    "noopsnet_neon:amber_flower",
+    "noopsnet_neon:lime_flower",
+    "noopsnet_neon:ice_flower"
+  ]
+}

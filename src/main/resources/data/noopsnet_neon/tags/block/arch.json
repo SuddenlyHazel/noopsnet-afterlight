@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "noopsnet_neon:cyan_arch",
+    "noopsnet_neon:pink_arch",
+    "noopsnet_neon:violet_arch",
+    "noopsnet_neon:amber_arch",
+    "noopsnet_neon:lime_arch",
+    "noopsnet_neon:ice_arch"
+  ]
+}

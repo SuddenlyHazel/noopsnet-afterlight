@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "noopsnet_neon:cyan_fairy",
+    "noopsnet_neon:pink_fairy",
+    "noopsnet_neon:violet_fairy",
+    "noopsnet_neon:amber_fairy",
+    "noopsnet_neon:lime_fairy",
+    "noopsnet_neon:ice_fairy"
+  ]
+}

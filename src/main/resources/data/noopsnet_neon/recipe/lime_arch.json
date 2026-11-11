@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    " I ",
+    "GDG",
+    " C "
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:quartz"
+    },
+    "G": {
+      "item": "minecraft:glowstone_dust"
+    },
+    "D": {
+      "item": "minecraft:lime_dye"
+    },
+    "C": {
+      "item": "noopsnet_neon:carbon_panel"
+    }
+  },
+  "result": {
+    "id": "noopsnet_neon:lime_arch",
+    "count": 2
+  }
+}

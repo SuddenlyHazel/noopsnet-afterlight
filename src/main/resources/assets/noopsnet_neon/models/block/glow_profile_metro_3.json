@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "noopsnet_neon:block/metro_glow3"
+  }
+}

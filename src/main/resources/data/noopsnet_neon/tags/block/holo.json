@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "noopsnet_neon:cyan_holo",
+    "noopsnet_neon:pink_holo",
+    "noopsnet_neon:violet_holo",
+    "noopsnet_neon:amber_holo",
+    "noopsnet_neon:lime_holo",
+    "noopsnet_neon:ice_holo"
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "noopsnet_neon:cyan_sign",
+    "noopsnet_neon:pink_sign",
+    "noopsnet_neon:violet_sign",
+    "noopsnet_neon:amber_sign",
+    "noopsnet_neon:lime_sign",
+    "noopsnet_neon:ice_sign"
+  ]
+}

@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    " I ",
+    "GDG",
+    " C "
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:flowering_azalea"
+    },
+    "G": {
+      "item": "minecraft:glowstone_dust"
+    },
+    "D": {
+      "item": "minecraft:cyan_dye"
+    },
+    "C": {
+      "item": "noopsnet_neon:carbon_panel"
+    }
+  },
+  "result": {
+    "id": "noopsnet_neon:cyan_flower",
+    "count": 2
+  }
+}

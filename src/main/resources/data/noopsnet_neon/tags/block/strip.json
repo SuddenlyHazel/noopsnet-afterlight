@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "noopsnet_neon:cyan_strip",
+    "noopsnet_neon:pink_strip",
+    "noopsnet_neon:violet_strip",
+    "noopsnet_neon:amber_strip",
+    "noopsnet_neon:lime_strip",
+    "noopsnet_neon:ice_strip"
+  ]
+}

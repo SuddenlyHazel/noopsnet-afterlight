@@ -1,0 +1,120 @@
+{
+  "parent": "minecraft:block/block",
+  "render_type": "minecraft:solid",
+  "textures": {
+    "body": "noopsnet_neon:block/walnut",
+    "alloy": "noopsnet_neon:block/brushed_alloy",
+    "particle": "noopsnet_neon:block/walnut",
+    "tube": "noopsnet_neon:block/cyan_tube"
+  },
+  "elements": [
+    {
+      "from": [
+        0,
+        5,
+        13
+      ],
+      "to": [
+        16,
+        11,
+        16
+      ],
+      "faces": {
+        "north": {
+          "texture": "#body"
+        },
+        "south": {
+          "texture": "#body"
+        },
+        "east": {
+          "texture": "#body"
+        },
+        "west": {
+          "texture": "#body"
+        },
+        "up": {
+          "texture": "#body"
+        },
+        "down": {
+          "texture": "#body"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        6,
+        12
+      ],
+      "to": [
+        16,
+        10,
+        13
+      ],
+      "faces": {
+        "north": {
+          "texture": "#alloy"
+        },
+        "south": {
+          "texture": "#alloy"
+        },
+        "east": {
+          "texture": "#alloy"
+        },
+        "west": {
+          "texture": "#alloy"
+        },
+        "up": {
+          "texture": "#alloy"
+        },
+        "down": {
+          "texture": "#alloy"
+        }
+      }
+    },
+    {
+      "from": [
+        0,
+        7,
+        11.5
+      ],
+      "to": [
+        16,
+        9,
+        12
+      ],
+      "faces": {
+        "north": {
+          "texture": "#tube",
+          "tintindex": 0
+        },
+        "south": {
+          "texture": "#tube",
+          "tintindex": 0
+        },
+        "east": {
+          "texture": "#tube",
+          "tintindex": 0
+        },
+        "west": {
+          "texture": "#tube",
+          "tintindex": 0
+        },
+        "up": {
+          "texture": "#tube",
+          "tintindex": 0
+        },
+        "down": {
+          "texture": "#tube",
+          "tintindex": 0
+        }
+      },
+      "shade": false,
+      "neoforge_data": {
+        "block_light": 15,
+        "sky_light": 15,
+        "ambient_occlusion": false
+      }
+    }
+  ]
+}

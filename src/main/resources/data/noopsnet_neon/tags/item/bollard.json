@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "noopsnet_neon:cyan_bollard",
+    "noopsnet_neon:pink_bollard",
+    "noopsnet_neon:violet_bollard",
+    "noopsnet_neon:amber_bollard",
+    "noopsnet_neon:lime_bollard",
+    "noopsnet_neon:ice_bollard"
+  ]
+}

@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "noopsnet_neon:block/basalt_tiles"
+    }
+  }
+}

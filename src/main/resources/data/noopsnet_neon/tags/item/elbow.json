@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "noopsnet_neon:cyan_elbow",
+    "noopsnet_neon:pink_elbow",
+    "noopsnet_neon:violet_elbow",
+    "noopsnet_neon:amber_elbow",
+    "noopsnet_neon:lime_elbow",
+    "noopsnet_neon:ice_elbow"
+  ]
+}

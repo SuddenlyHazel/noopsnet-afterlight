@@ -1,0 +1,11 @@
+{
+  "replace": false,
+  "values": [
+    "noopsnet_neon:cyan_channel",
+    "noopsnet_neon:pink_channel",
+    "noopsnet_neon:violet_channel",
+    "noopsnet_neon:amber_channel",
+    "noopsnet_neon:lime_channel",
+    "noopsnet_neon:ice_channel"
+  ]
+}

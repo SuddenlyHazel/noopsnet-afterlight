@@ -1,0 +1,137 @@
+{
+  "colors": {
+    "cyan": {
+      "name": "Sea Glass",
+      "rgb": [
+        48,
+        235,
+        255
+      ],
+      "dye": "cyan"
+    },
+    "pink": {
+      "name": "Rose",
+      "rgb": [
+        255,
+        66,
+        164
+      ],
+      "dye": "pink"
+    },
+    "violet": {
+      "name": "Lavender",
+      "rgb": [
+        175,
+        91,
+        255
+      ],
+      "dye": "purple"
+    },
+    "amber": {
+      "name": "Peach",
+      "rgb": [
+        255,
+        167,
+        67
+      ],
+      "dye": "orange"
+    },
+    "lime": {
+      "name": "Sage",
+      "rgb": [
+        75,
+        255,
+        158
+      ],
+      "dye": "lime"
+    },
+    "ice": {
+      "name": "Vanilla",
+      "rgb": [
+        255,
+        233,
+        177
+      ],
+      "dye": "white"
+    }
+  },
+  "forms": {
+    "channel": {
+      "name": "Glow Inlay",
+      "light": 14,
+      "ingredient": "quartz",
+      "count": 4
+    },
+    "strip": {
+      "name": "Shelf Glow",
+      "light": 14,
+      "ingredient": "glass_pane",
+      "count": 4
+    },
+    "elbow": {
+      "name": "Corner Glow",
+      "light": 14,
+      "ingredient": "glass_pane",
+      "count": 4
+    },
+    "louver": {
+      "name": "Shaded Glow Panel",
+      "light": 14,
+      "ingredient": "oak_slab",
+      "count": 4
+    },
+    "sign": {
+      "name": "Cafe Sign",
+      "light": 14,
+      "ingredient": "oak_sign",
+      "count": 2
+    },
+    "blade": {
+      "name": "Teahouse Sign",
+      "light": 14,
+      "ingredient": "chain",
+      "count": 2
+    },
+    "holo": {
+      "name": "Moon Ornament",
+      "light": 14,
+      "ingredient": "amethyst_shard",
+      "count": 2
+    },
+    "bollard": {
+      "name": "Reading Lamp",
+      "light": 15,
+      "ingredient": "copper_ingot",
+      "count": 2
+    },
+    "arch": {
+      "name": "Aurora Arch",
+      "light": 15,
+      "ingredient": "quartz",
+      "count": 2
+    },
+    "cloud": {
+      "name": "Daydream Cloud",
+      "light": 14,
+      "ingredient": "white_wool",
+      "count": 2
+    },
+    "flower": {
+      "name": "Bloom Wall Light",
+      "light": 14,
+      "ingredient": "flowering_azalea",
+      "count": 2
+    },
+    "fairy": {
+      "name": "Firefly Garland",
+      "light": 13,
+      "ingredient": "string",
+      "count": 4
+    }
+  },
+  "materials": {
+    "carbon_panel": "Cream Ceramic Panel",
+    "brushed_alloy": "Satin Copper Panel",
+    "basalt_tiles": "Warm Stone Tiles"
+  }
+}

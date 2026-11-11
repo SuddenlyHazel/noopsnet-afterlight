@@ -1,0 +1,25 @@
+{
+  "source": "https://github.com/sixthsurge/photon/pull/670",
+  "commit": "73cdbebebf545716129a447386de9d1549634e8d",
+  "files": {
+    "shaders/include/fog/overworld/raymarched.glsl": "40fc8c7c604dce236affc3a334a6c4ae49e745f280e46596f942deebd75eb085",
+    "shaders/include/lighting/shadows/distance_fade.glsl": null,
+    "shaders/include/sky/background.glsl": null,
+    "shaders/include/sky/sky.glsl": "8cced04e72d94ccae11d11d1c15690583d14ecc4bd42e1c1d1e38ef76dd3038c",
+    "shaders/program/d0_sky_map.fsh": "393f1246368c40fd18ff5189a38e5a32bd936b98025fde5473ba54b2704b600d",
+    "shaders/program/d4_deferred_shading.fsh": "6b436186251f012f73df467225665c2269fe39ae18123a3800392c041bfbb57f",
+    "shaders/program/d4_deferred_shading.vsh": "527b37229ce3005987fe6ae24fd125f04d41d8f817d08b46147ae3d2ac61c66f",
+    "shaders/program/d4_split.glsl": null,
+    "shaders/settings.glsl": "e6c655381f8daac3592053cc147354b0c5933a6241c30913bd5766bcabfda6b5",
+    "shaders/shaders.properties": "c08c43a575d0a949a7f2788dafc6f0b0a8c33b8a2fa7b5d19b42730d96e6342f",
+    "shaders/world0/deferred5.fsh": null,
+    "shaders/world0/deferred5.vsh": null,
+    "shaders/world0/deferred6.fsh": null,
+    "shaders/world0/deferred6.vsh": null,
+    "shaders/world1/deferred5.fsh": null,
+    "shaders/world1/deferred5.vsh": null,
+    "shaders/world1/deferred6.fsh": null,
+    "shaders/world1/deferred6.vsh": null,
+    "shaders/include/lighting/specular_lighting.glsl": "dd55a856ea241d6d32bb45dcd1fc6e98427ff035288b0e9be91abe0418ed9167"
+  }
+}

@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Afterlight · cozy neon</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#231e1c;color:#f1e5d5;font:16px system-ui}
+main{max-width:1300px;margin:auto;padding:48px 24px}h1{font-size:clamp(3rem,7vw,6rem);letter-spacing:.06em;margin:0}
+header p{max-width:760px;line-height:1.7;color:#d0bca7}small{color:#f2c69b;letter-spacing:.18em}
+nav{display:flex;flex-wrap:wrap;align-items:center;gap:12px;margin:28px 0}
+button,input{font:inherit;background:#3a302a;color:#f1e5d5;border:1px solid #94765a;border-radius:8px;padding:10px}
+button{cursor:pointer}button[aria-pressed=true]{outline:2px solid #fff0d3;outline-offset:2px}
+button[data-preset]{border-top:4px solid var(--swatch)}input[type=color]{height:44px;width:64px;padding:4px;cursor:pointer}
+input[type=text]{width:112px}label{display:flex;gap:10px;align-items:center}.hint{color:#bba38b}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:16px}
+article{background:radial-gradient(at 50% 40%,#504033,#302823 75%);border:1px solid #725c48;border-radius:18px;padding:14px 20px}
+canvas{display:block;width:100%;aspect-ratio:1}h2{font-size:20px;margin:0 0 10px}code{font-size:12px;color:#c2a98f}
+footer{color:#c2a98f;line-height:1.7;margin:30px 0}
+</style>
+<main>
+<header><small>NOOPSNET / MAKE ROOM FOR COLOUR</small><h1>AFTERLIGHT</h1>
+<p>Walnut frames, creamy shades, satin copper and a glow that’s yours. Vivid neon for reading corners, garden rooms and your favourite café.</p>
+<p>Choose any colour below. Only the luminous parts change; the warm materials keep their own finish.</p>
+<p class="hint">Offline renders of the actual block meshes and textures, with illustrative bloom. These are not Minecraft screenshots or shader captures. <a href="room-study.png">See the standalone OpenGL room study</a>.</p></header>
+<nav aria-label="Choose your glow"><label>Any colour <input id="picker" type="color" value="#ffa743"></label>
+<label for="hex">Hex <input id="hex" type="text" value="#FFA743" maxlength="7" spellcheck="false" aria-describedby="invalid"></label>
+<span id="invalid" role="status"></span><button id="power" aria-pressed="false">Blackout: off</button></nav>
+<nav aria-label="Vivid starting colours">PRESETS</nav><section class="grid">CARDS</section>
+<footer>In Minecraft: right-click the <strong>Colour Palette</strong> in the air to open the HSV/hex picker, use it on a light to paint, and sneak-use to sample a colour. Hold it in your offhand while placing fresh lights to use that colour.<br>
+75 blocks · any 24-bit RGB colour · Minecraft 1.21.1 / NeoForge 21.1.265<br>
+LabPBR material maps, selective fullbright geometry and redstone blackout states. See the mod README for shader settings.</footer></main>
+<script>
+const presets=PRESET_DATA;
+let colour='#FFA743',off=false,revision=0;
+const cache=new Map();
+function load(path){if(!cache.has(path))cache.set(path,new Promise((resolve,reject)=>{const img=new Image();img.onload=()=>resolve(img);img.onerror=()=>reject(new Error(path));img.src=path}));return cache.get(path)}
+async function update(){
+ const current=++revision, chosen=colour, mode=off?'off':'on';
+ document.querySelector('#power').textContent=`Blackout: ${off?'on':'off'}`;
+ document.querySelector('#power').setAttribute('aria-pressed',String(off));
+ document.querySelectorAll('[data-preset]').forEach(b=>b.setAttribute('aria-pressed',String(presets[b.dataset.preset].toUpperCase()===chosen)));
+ await Promise.all([...document.querySelectorAll('[data-form]')].map(async canvas=>{
+  const [body,glow]=await Promise.all([load(`blocks/custom_${canvas.dataset.form}_${mode}_body.png`),load(`blocks/custom_${canvas.dataset.form}_${mode}_glow.png`)]);
+  if(current!==revision)return;
+  const layer=document.createElement('canvas');layer.width=360;layer.height=360;const tint=layer.getContext('2d');
+  tint.drawImage(glow,0,0);tint.globalCompositeOperation='multiply';tint.fillStyle=chosen;tint.fillRect(0,0,360,360);
+  tint.globalCompositeOperation='destination-in';tint.drawImage(glow,0,0);
+  const ctx=canvas.getContext('2d');ctx.clearRect(0,0,360,360);ctx.drawImage(layer,0,0);ctx.drawImage(body,0,0);
+  canvas.setAttribute('aria-label',`${canvas.dataset.label}, ${chosen}, ${mode}`);
+ }));
+}
+function select(value){colour=value.toUpperCase();document.querySelector('#picker').value=colour;document.querySelector('#hex').value=colour;document.querySelector('#invalid').textContent='';update()}
+document.querySelector('#picker').addEventListener('input',e=>select(e.target.value));
+document.querySelector('#hex').addEventListener('input',e=>{let value=e.target.value;if(!value.startsWith('#'))value='#'+value;if(/^#[0-9a-fA-F]{6}$/.test(value))select(value);else document.querySelector('#invalid').textContent='Use six hex digits';});
+document.querySelectorAll('[data-preset]').forEach(b=>b.onclick=()=>select(presets[b.dataset.preset]));
+document.querySelector('#power').onclick=()=>{off=!off;update()};update().catch(()=>document.querySelector('#invalid').textContent='A preview image could not be loaded.');
+</script></html>

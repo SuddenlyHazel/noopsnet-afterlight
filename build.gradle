@@ -1,0 +1,111 @@
+plugins {
+    id 'java-library'
+    id 'net.neoforged.moddev' version '2.0.148'
+}
+version = project.mod_version
+group = 'net.noopsnet'
+base { archivesName = 'noopsnet-neon-neoforge' }
+java { toolchain.languageVersion = JavaLanguageVersion.of(21); withSourcesJar() }
+repositories { mavenCentral(); maven { url = 'https://api.modrinth.com/maven' } }
+
+// The checked-in generated resources let players build with Java alone.
+// Regenerate original art/models with tools/generate.py when editing the catalog.
+sourceSets { gametest; client }
+sourceSets.client.compileClasspath += sourceSets.main.output
+sourceSets.client.runtimeClasspath += sourceSets.main.output
+configurations.clientImplementation.extendsFrom configurations.implementation
+configurations.clientRuntimeOnly.extendsFrom configurations.runtimeOnly
+dependencies {
+    clientCompileOnly('maven.modrinth:iris:KduFYu4t') { transitive = false }
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+    testImplementation 'org.ow2.asm:asm-tree:9.8'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+tasks.named('test') {
+    useJUnitPlatform()
+    dependsOn tasks.named('compileClientJava')
+    inputs.files(sourceSets.client.output.classesDirs).withPropertyName('clientBridgeClasses')
+    inputs.files(configurations.clientCompileClasspath).withPropertyName('clientBridgeClasspath')
+    doFirst {
+        systemProperty 'afterlight.irisJar', configurations.clientCompileClasspath.files.find { it.name.startsWith('iris-') }.absolutePath
+        systemProperty 'afterlight.clientClasses', sourceSets.client.output.classesDirs.singleFile.absolutePath
+    }
+}
+sourceSets.gametest.compileClasspath += sourceSets.main.output
+sourceSets.gametest.runtimeClasspath += sourceSets.main.output
+configurations.gametestImplementation.extendsFrom configurations.implementation
+configurations.gametestRuntimeOnly.extendsFrom configurations.runtimeOnly
+neoForge {
+    enable { version = project.neo_version; disableRecompilation = true }
+    addModdingDependenciesTo sourceSets.gametest
+    addModdingDependenciesTo sourceSets.client
+    mods { noopsnet_neon { sourceSet sourceSets.main; sourceSet sourceSets.client; sourceSet sourceSets.gametest } }
+    runs {
+        server { server(); programArgument '--nogui' }
+        compatServer {
+            server(); programArgument '--nogui'
+            gameDirectory = file('run/compat')
+            programArguments.addAll '--port', '0'
+            // Match the full community server; fresh DH LOD construction also needs headroom.
+            jvmArguments.add '-Xmx' + providers.gradleProperty('compatHeap').getOrElse('8G')
+        }
+        gameTestServer {
+            type = 'gameTestServer'
+            sourceSet = sourceSets.gametest
+            loadedMods = [mods.noopsnet_neon]
+            systemProperty 'neoforge.enabledGameTestNamespaces', 'noopsnet_neon'
+        }
+    }
+}
+tasks.named('jar') { from sourceSets.client.output }
+tasks.named('sourcesJar') { from sourceSets.client.allSource }
+// The fixture source set participates in dev runs only, never in the distributed JAR.
+processResources {
+    inputs.property 'version', project.version
+    filesMatching('META-INF/neoforge.mods.toml') { expand version: project.version }
+}
+tasks.withType(JavaCompile).configureEach { options.release = 21; options.encoding = 'UTF-8' }
+tasks.withType(AbstractArchiveTask).configureEach {
+    preserveFileTimestamps = false
+    reproducibleFileOrder = true
+}
+tasks.register('verifyModJar') {
+    dependsOn tasks.named('jar')
+    doLast {
+        new java.util.zip.ZipFile(tasks.jar.archiveFile.get().asFile).withCloseable { zip ->
+            ['META-INF/neoforge.mods.toml', 'net/noopsnet/neon/NoopsnetNeon.class',
+             'net/noopsnet/neon/client/PaletteScreen.class', 'net/noopsnet/neon/PaletteMenu.class',
+             'net/noopsnet/neon/client/SignArtScreen.class', 'net/noopsnet/neon/client/SignArtRenderer.class',
+             'net/noopsnet/neon/client/SignArtTexture.class', 'net/noopsnet/neon/client/IrisArtMaterials.class',
+             'net/noopsnet/neon/client/GlowModel.class', 'net/noopsnet/neon/client/ConnectedModel.class',
+             'net/noopsnet/neon/ConnectedNeonBlock.class',
+             'net/noopsnet/neon/LightSettings.class', 'net/noopsnet/neon/PaletteSettingsPayload.class',
+             'assets/noopsnet_neon/textures/block/tube_glow0_s.png',
+             'assets/noopsnet_neon/models/block/cyan_strip_connect15_on.json',
+             'net/noopsnet/neon/SignArtMenu.class', 'net/noopsnet/neon/SignArtPayload.class',
+             'assets/noopsnet_neon/models/item/palette.json',
+             'assets/noopsnet_neon/textures/block/cyan_tube_s.png',
+             'assets/noopsnet_neon/models/block/cyan_blade_on.json'].each {
+                if (zip.getEntry(it) == null) throw new GradleException("Missing entry: ${it}")
+            }
+            if (zip.getEntry('net/noopsnet/neon/NeonGameTests.class') != null)
+                throw new GradleException('Fixture leaked into production mod')
+        }
+    }
+}
+tasks.named('check') { dependsOn tasks.named('verifyModJar') }
+tasks.named('runCompatServer') { standardInput = System.in }
+// On this runtime a mod-loading crash can return exit code zero. Require the
+// actual GameTest success marker so CI cannot report a false pass.
+tasks.named('runGameTestServer') { doFirst { delete file('run/logs/latest.log') } }
+tasks.register('verifyGameTests') {
+    dependsOn tasks.named('runGameTestServer')
+    doLast {
+        def log = file('run/logs/latest.log')
+        if (!log.exists() || !log.text.contains('All 10 required tests passed'))
+            throw new GradleException('Afterlight native GameTests did not all pass; inspect run/logs/latest.log')
+    }
+}
+
+// Include the public source license and resource notices in built artifacts.
+tasks.named('jar') { from('LICENSE'); from('NOTICE.md') }

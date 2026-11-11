@@ -1,0 +1,27 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "building",
+  "pattern": [
+    " I ",
+    "GDG",
+    " C "
+  ],
+  "key": {
+    "I": {
+      "item": "minecraft:white_wool"
+    },
+    "G": {
+      "item": "minecraft:glowstone_dust"
+    },
+    "D": {
+      "item": "minecraft:purple_dye"
+    },
+    "C": {
+      "item": "noopsnet_neon:carbon_panel"
+    }
+  },
+  "result": {
+    "id": "noopsnet_neon:violet_cloud",
+    "count": 2
+  }
+}

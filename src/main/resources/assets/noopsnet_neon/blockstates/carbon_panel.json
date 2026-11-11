@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "noopsnet_neon:block/carbon_panel"
+    }
+  }
+}

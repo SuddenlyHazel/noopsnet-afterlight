@@ -1,0 +1,21 @@
+modLoader="javafml"
+loaderVersion="[4,)"
+license="MPL-2.0 (code); see NOTICE.md for artwork"
+[[mixins]]
+config="noopsnet-neon.mixins.json"
+[[mods]]
+modId="noopsnet_neon"
+version="${version}"
+displayName="NoopsNet Afterlight"
+authors="NoopsNet"
+description="Cozy neon for cafes, reading corners and garden rooms. Any RGB colour with an HSV/hex picker, warm materials, and LabPBR emission, normal and specular maps."
+[[dependencies.noopsnet_neon]]
+modId="neoforge"
+type="required"
+versionRange="[21.1.265,21.2)"
+side="BOTH"
+[[dependencies.noopsnet_neon]]
+modId="minecraft"
+type="required"
+versionRange="[1.21.1]"
+side="BOTH"
