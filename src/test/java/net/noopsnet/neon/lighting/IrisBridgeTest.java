@@ -12,6 +12,32 @@ import static org.junit.jupiter.api.Assertions.*;
 
 /** Check the actual pinned binary ABI without starting a game client. */
 class IrisBridgeTest {
+    @Test void translucentParticleHookRepairsThePinnedNeoforgeGap() throws Exception {
+        String desc="(Lnet/minecraft/client/renderer/LightTexture;Lnet/minecraft/client/Camera;FLnet/minecraft/client/renderer/culling/Frustum;Ljava/util/function/Predicate;)V";
+        try(ZipFile iris=new ZipFile(System.getProperty("afterlight.irisJar"))){
+            String config=new String(iris.getInputStream(iris.getEntry("mixins.iris.fantastic.json")).readAllBytes(),java.nio.charset.StandardCharsets.UTF_8);
+            assertFalse(config.contains("MixinParticleEngine"),"Iris now registers its hook; remove/review our redirect before updating the pinned dependency");
+            ClassNode access=new ClassNode();new ClassReader(iris.getInputStream(iris.getEntry("net/irisshaders/iris/pipeline/programs/ShaderAccess.class"))).accept(access,0);
+            MethodNode selector=access.methods.stream().filter(m->m.name.equals("getParticleTranslucentShader")).findFirst().orElseThrow();
+            assertTrue(java.util.stream.StreamSupport.stream(selector.instructions.spliterator(),false).anyMatch(i->i instanceof FieldInsnNode f&&f.name.equals("PARTICLES_TRANS")));
+            ClassNode engine=new ClassNode();new ClassReader("net.minecraft.client.particle.ParticleEngine").accept(engine,0);
+            MethodNode render=engine.methods.stream().filter(m->m.name.equals("render")&&m.desc.equals(desc)).findFirst().orElseThrow();
+            assertEquals(1,java.util.stream.StreamSupport.stream(render.instructions.spliterator(),false).filter(i->i instanceof MethodInsnNode call&&call.owner.equals("com/mojang/blaze3d/systems/RenderSystem")&&call.name.equals("setShader")).count());
+            ClassNode mixin=new ClassNode();new ClassReader(Files.readAllBytes(Path.of(System.getProperty("afterlight.clientClasses"),"net/noopsnet/neon/client/mixin/IrisParticleMixin.class"))).accept(mixin,0);
+            MethodNode redirect=mixin.methods.stream().filter(m->m.name.equals("afterlight$particleShader")).findFirst().orElseThrow();
+            assertEquals("(Ljava/util/function/Supplier;"+desc.substring(1),redirect.desc);
+            assertTrue(redirect.visibleAnnotations.stream().filter(a->a.desc.endsWith("/Redirect;")).anyMatch(a->a.values.toString().contains("render"+desc)));
+            String ours=Files.readString(Path.of("src/main/resources/noopsnet-neon.mixins.json"));
+            assertTrue(ours.contains("IrisParticleMixin")&&ours.contains("IrisCompatPlugin"));
+        }
+    }
+    @Test void particleHookIsDisabledWhenIrisIsAbsent() throws Exception {
+        try(var loader=new java.net.URLClassLoader(new java.net.URL[]{Path.of(System.getProperty("afterlight.clientClasses")).toUri().toURL()},getClass().getClassLoader())){
+            var plugin=Class.forName("net.noopsnet.neon.client.mixin.IrisCompatPlugin",true,loader).getConstructor().newInstance();
+            var apply=plugin.getClass().getMethod("shouldApplyMixin",String.class,String.class);
+            assertEquals(false,apply.invoke(plugin,"net.minecraft.client.particle.ParticleEngine","net.noopsnet.neon.client.mixin.IrisParticleMixin"));
+        }
+    }
     @Test void irisRoutesEyesThroughBlockShaderAndSupportsOurExplicitPbrLoader() throws Exception {
         try (ZipFile iris = new ZipFile(System.getProperty("afterlight.irisJar"))) {
             ClassNode renderer=new ClassNode();

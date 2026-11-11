@@ -14,13 +14,43 @@ vec4 afterlight_sample(sampler3D volume, vec3 origin, vec3 size, vec3 position) 
     vec3 edge = min(cell, size - cell);
     float fade = smoothstep(0.5, 2.5, min(edge.x, min(edge.y, edge.z)));
     if (fade <= 0.0) return vec4(0.0);
-    return texture(volume, cell / size) * fade;
+    // Opaque cells carry alpha -1. Ordinary texture filtering would mix their
+    // zero radiance into the room and expose warm vanilla light at corners.
+    // Interpolate only the traversable neighbours, retaining dark air cells so
+    // light still fades at its reach limit and cannot cross a closed wall.
+    vec3 grid = cell - 0.5;
+    ivec3 base = ivec3(floor(grid));
+    vec3 fraction = fract(grid);
+    vec4 light = vec4(0.0);
+    float total = 0.0;
+    for (int z = 0; z < 2; ++z) {
+        for (int y = 0; y < 2; ++y) {
+            for (int x = 0; x < 2; ++x) {
+                ivec3 offset = ivec3(x, y, z);
+                vec3 weights = mix(1.0 - fraction, fraction, vec3(offset));
+                float weight = weights.x * weights.y * weights.z;
+                ivec3 texel = clamp(base + offset, ivec3(0), ivec3(size) - 1);
+                vec4 sample_light = texelFetch(volume, texel, 0);
+                if (sample_light.a >= 0.0) {
+                    light += sample_light * weight;
+                    total += weight;
+                }
+            }
+        }
+    }
+    return total > 0.0 ? light * (fade / total) : vec4(0.0);
 }
 
 // scene_pos and the volume origin are both relative to the interpolated camera.
 // Sampling the air in front of a surface prevents opaque walls sampling darkness.
 vec3 afterlight_blocklight(vec3 scene_pos, vec3 normal, vec3 original, float vanilla_level) {
+#ifdef NO_NORMAL
+    // Particle/textured vertices have no normal attribute. Photon uses this
+    // same guard for its LPV: their unused TBN can contain normalize(0) NaNs.
+    vec3 position = scene_pos;
+#else
     vec3 position = scene_pos + normal * 0.55;
+#endif
     vec4 light = afterlight_sample(afterlightLightVolume, afterlightVolumeOrigin, afterlightVolumeSize, position);
     if (afterlightVolumeBlend < 1.0) {
         vec4 previous = afterlight_sample(afterlightPreviousVolume, afterlightPreviousOrigin, afterlightPreviousSize, position);

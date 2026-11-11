@@ -2,7 +2,8 @@
   "required": false,
   "minVersion": "0.8",
   "package": "net.noopsnet.neon.client.mixin",
+  "plugin": "net.noopsnet.neon.client.mixin.IrisCompatPlugin",
   "compatibilityLevel": "JAVA_21",
-  "client": ["IrisSamplerMixin", "IrisUniformMixin"],
+  "client": ["IrisSamplerMixin", "IrisUniformMixin", "IrisParticleMixin"],
   "injectors": {"defaultRequire": 1}
 }

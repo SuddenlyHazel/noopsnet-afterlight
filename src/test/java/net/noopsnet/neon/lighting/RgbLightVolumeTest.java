@@ -34,12 +34,23 @@ class RgbLightVolumeTest {
     @Test void unloadedVolumeIsOpaqueAndBlackSuppressesItsWhiteLightWithoutRadiance() {
         int n=16; byte[] opacity=new byte[n*n*n]; java.util.Arrays.fill(opacity,(byte)15);
         var volume=RgbLightVolume.build(n,0,0,0,opacity,List.of(new RgbLightVolume.Source(8,8,8,0xFFFFFF,15)));
-        assertEquals(0,volume.rgba()[cell(n,9,8,8)+3]);
-        for (float v:RgbLightVolume.build(n,0,0,0,opacity,List.of()).rgba()) assertEquals(0,v);
+        assertEquals(-1,volume.rgba()[cell(n,9,8,8)+3],"Opaque cells must not dilute adjacent air during filtering");
+        float[] empty=RgbLightVolume.build(n,0,0,0,opacity,List.of()).rgba();
+        for (int i=0;i<empty.length;i++) assertEquals(i%4==3?-1:0,empty[i]);
         var black=RgbLightVolume.build(n,0,0,0,opacity,List.of(new RgbLightVolume.Source(8,8,8,0,15)));
         int seed=cell(n,8,8,8);
         assertEquals(0,black.rgba()[seed]);assertEquals(0,black.rgba()[seed+1]);assertEquals(0,black.rgba()[seed+2]);
         assertTrue(black.rgba()[seed+3]>0,"Coverage removes the matching vanilla white contribution");
+    }
+    @Test void opacityMarkerDistinguishesSolidGeometryFromDarkAirAndOpaqueSources() {
+        int n=16; byte[] opacity=new byte[n*n*n];
+        opacity[cell(n,8,8,8)/4]=15;
+        var empty=RgbLightVolume.build(n,0,0,0,opacity,List.of());
+        assertEquals(-1,empty.rgba()[cell(n,8,8,8)+3]);
+        assertEquals(0,empty.rgba()[cell(n,9,8,8)+3],"Dark air remains a valid interpolation sample");
+        var source=RgbLightVolume.build(n,0,0,0,opacity,List.of(new RgbLightVolume.Source(8,8,8,0x00FF00,15)));
+        assertEquals(1,source.rgba()[cell(n,8,8,8)+3],"An opaque emitting block still contributes light");
+        assertTrue(source.rgba()[cell(n,9,8,8)+1]>0,"Its emitted light can leave the source voxel");
     }
     @Test void worldOriginAndGammaAreHandledBeforeBlending() {
         int n=16;

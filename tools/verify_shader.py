@@ -20,7 +20,7 @@ def main():
             return re.sub(r'^\s*#include "([^"]+)"',lambda m:expand('shaders'+m[1] if m[1].startswith('/') else posixpath.normpath(posixpath.join(posixpath.dirname(path),m[1]))),source,flags=re.M)
         # Opaque deferred lighting and forward translucent/DH lighting all use the bridge.
         for world in ('world0','world-1','world1'):
-            for name in ('deferred4.fsh','gbuffers_water.fsh','dh_water.fsh','dh_terrain.fsh','gbuffers_spidereyes.fsh','gbuffers_block.fsh'):
+            for name in ('deferred4.fsh','gbuffers_water.fsh','dh_water.fsh','dh_terrain.fsh','gbuffers_spidereyes.fsh','gbuffers_block.fsh','gbuffers_particles_translucent.fsh','gbuffers_textured.fsh'):
                 path=f'shaders/{world}/{name}';source=expand(path)
                 assert name in ('dh_terrain.fsh','gbuffers_spidereyes.fsh','gbuffers_block.fsh') or source.count('lighting = afterlight_blocklight')==1
                 # Iris supplies these macros and performs C-preprocessor line splicing.

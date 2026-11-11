@@ -70,6 +70,15 @@ Reference: https://github.com/sixthsurge/photon/issues/569
 Validation uses shader compilation and preprocessed pass/blend checks, not an
 automated Minecraft screenshot.
 
+Version 0.4.4 must be paired with Afterlight 0.5.3. Opaque voxels are explicitly
+marked so interpolation cannot dilute valid lighting with wall interiors and
+expose warm vanilla blocklight along corners. Dark air still participates in
+interpolation. Normal-less particle passes sample without a surface-normal
+offset. The mod also restores Iris NeoForge's omitted translucent-particle shader
+selection hook. An offscreen GPU room fixture verifies corner blackout, color
+continuity, closed walls and invalid particle normals. In-game acceptance remains
+the player's check; see `tools/lighting_surface_test.py`.
+
 Version 0.4.3 removes the low-energy cutoff that could abruptly restore white
 blocklight at an RGB volume boundary. Zero energy still preserves ordinary
 lighting; dim samples now fade continuously, without dividing RGB by tiny

@@ -23,6 +23,9 @@ dependencies {
 }
 tasks.named('test') {
     useJUnitPlatform()
+    // Read the real NeoForge particle bytecode and exercise the optional mixin
+    // plugin without booting a Minecraft client.
+    classpath += sourceSets.client.compileClasspath
     dependsOn tasks.named('compileClientJava')
     inputs.files(sourceSets.client.output.classesDirs).withPropertyName('clientBridgeClasses')
     inputs.files(configurations.clientCompileClasspath).withPropertyName('clientBridgeClasspath')

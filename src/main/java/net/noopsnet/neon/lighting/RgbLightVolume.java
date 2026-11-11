@@ -5,7 +5,7 @@ import java.util.ArrayDeque;
 import java.util.Arrays;
 import java.util.List;
 
-/** Immutable world snapshots in, linear RGB + energy voxels out. No game or GL dependencies. */
+/** Immutable world snapshots in, linear RGB + energy voxels out. Alpha -1 marks opaque cells. */
 public final class RgbLightVolume {
     public record Source(int x, int y, int z, int rgb, int level) {}
     public record Result(int size, int x, int y, int z, float[] rgba) {}
@@ -48,6 +48,11 @@ public final class RgbLightVolume {
             }
             buckets[0].clear();
         }
+        // Keep unlit air distinct from solid geometry. The shader excludes
+        // opaque samples from interpolation instead of diluting nearby light.
+        // A light source can itself be opaque, so retain reached source cells.
+        for (int i = 0; i < count; i++)
+            if ((opacity[i] & 255) >= 15 && rgba[i * 4 + 3] == 0) rgba[i * 4 + 3] = -1;
         return new Result(size, ox, oy, oz, rgba);
     }
 
