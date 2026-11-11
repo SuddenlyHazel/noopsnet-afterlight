@@ -75,7 +75,16 @@ public final class NeonBlockEntity extends BlockEntity {
         color = state.getBlock() instanceof NeonBlock light ? light.defaultColor : PaletteItem.DEFAULT_COLOR;
     }
 
-    public int color() { return color; }
+    private Integer liveColor;
+    /** Client-only transient show override. Never changes saved colour/settings or server data. */
+    public void setLiveColor(Integer rgb) {
+        if(level==null||!level.isClientSide)return;
+        if(rgb!=null&&(rgb<0||rgb>0xFFFFFF))throw new IllegalArgumentException("Invalid live RGB");
+        if(java.util.Objects.equals(liveColor,rgb))return;
+        liveColor=rgb;
+        level.sendBlockUpdated(worldPosition,getBlockState(),getBlockState(),Block.UPDATE_CLIENTS);
+    }
+    public int color() { return level!=null&&level.isClientSide&&liveColor!=null?liveColor:color; }
 
     public void setColor(int rgb) {
         if (rgb < 0 || rgb > 0xFFFFFF) throw new IllegalArgumentException("RGB outside 24-bit range");
