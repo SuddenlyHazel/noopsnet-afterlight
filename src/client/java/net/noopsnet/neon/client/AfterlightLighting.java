@@ -11,6 +11,7 @@ import net.noopsnet.neon.NeonBlock;
 import net.noopsnet.neon.NeonBlockEntity;
 import net.noopsnet.neon.lighting.RgbLightVolume;
 import net.noopsnet.neon.lighting.LightSnapshot;
+import net.noopsnet.neon.lighting.LightVolumeTransition;
 import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.opengl.GL33C;
@@ -37,9 +38,7 @@ public final class AfterlightLighting {
     private static int ticks, front;
     private static final int[] textures = new int[2];
     private static LightSnapshot lastSnapshot;
-    private static RgbLightVolume.Result previous;
-    private static long transitionStarted;
-    private static RgbLightVolume.Result current;
+    private static final LightVolumeTransition TRANSITION = new LightVolumeTransition();
     private static final FloatBuffer UPLOAD = BufferUtils.createFloatBuffer(COUNT * 4);
     private record Completed(long epoch, RgbLightVolume.Result result) {}
     private AfterlightLighting() {}
@@ -49,7 +48,7 @@ public final class AfterlightLighting {
     public static void tick(ClientTickEvent.Post event) {
         Minecraft mc = Minecraft.getInstance();
         if (level != mc.level) {
-            level = mc.level; epoch++; current = null; previous = null; lastSnapshot = null; PENDING.set(null);
+            level = mc.level; epoch++; TRANSITION.reset(); lastSnapshot = null; PENDING.set(null);
             LOADED.removeIf(e -> e.getLevel() != level || e.isRemoved());
         }
         LOADED.removeIf(e -> e.isRemoved() || e.getLevel() != level);
@@ -109,28 +108,32 @@ public final class AfterlightLighting {
     }
 
     public static void frame(RenderFrameEvent.Pre event) {
+        long now = System.nanoTime();
+        TRANSITION.beginFrame(now);
+        // Worker completion and render timings can compress the nominal 250 ms
+        // update spacing. Leave the latest result pending until the current fade
+        // completes, instead of jumping from its displayed mixture to its endpoint.
+        if (!TRANSITION.canAccept()) return;
         Completed done = PENDING.getAndSet(null);
         if (done == null || done.epoch != epoch || Minecraft.getInstance().level != level) return;
-        previous = current;
-        if (current != null) front = 1 - front;
+        if (TRANSITION.current() != null) front = 1 - front;
         int id = texture();
         int old = GL33C.glGetInteger(GL33C.GL_TEXTURE_BINDING_3D);
         GL33C.glBindTexture(GL33C.GL_TEXTURE_3D, id);
         UPLOAD.clear(); UPLOAD.put(done.result.rgba()).flip();
         GL33C.glTexSubImage3D(GL33C.GL_TEXTURE_3D, 0, 0, 0, 0, SIZE, SIZE, SIZE, GL33C.GL_RGBA, GL33C.GL_FLOAT, UPLOAD);
         GL33C.glBindTexture(GL33C.GL_TEXTURE_3D, old);
-        current = done.result;
-        transitionStarted = System.nanoTime();
+        TRANSITION.accept(done.result, now);
     }
 
-    public static Vector3f origin() { return origin(current); }
-    public static Vector3f previousOrigin() { return origin(previous); }
+    public static Vector3f origin() { return origin(TRANSITION.current()); }
+    public static Vector3f previousOrigin() { return origin(TRANSITION.previous()); }
     private static Vector3f origin(RgbLightVolume.Result volume) {
         var camera = Minecraft.getInstance().gameRenderer.getMainCamera().getPosition();
         return volume == null ? new Vector3f() : new Vector3f((float) (volume.x() - camera.x),
             (float) (volume.y() - camera.y), (float) (volume.z() - camera.z));
     }
-    public static double blend() { return Math.clamp((System.nanoTime() - transitionStarted) / 180_000_000.0, 0, 1); }
-    public static Vector3f previousSize() { return new Vector3f(previous == null ? 0 : SIZE); }
-    public static Vector3f size() { return new Vector3f(current == null ? 0 : SIZE); }
+    public static double blend() { return TRANSITION.blend(); }
+    public static Vector3f previousSize() { return new Vector3f(TRANSITION.previous() == null ? 0 : SIZE); }
+    public static Vector3f size() { return new Vector3f(TRANSITION.current() == null ? 0 : SIZE); }
 }

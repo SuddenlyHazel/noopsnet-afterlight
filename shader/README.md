@@ -69,3 +69,17 @@ Reference: https://github.com/sixthsurge/photon/issues/569
 0.4.2 ships in both alpha.23 client variants.
 Validation uses shader compilation and preprocessed pass/blend checks, not an
 automated Minecraft screenshot.
+
+Version 0.4.3 removes the low-energy cutoff that could abruptly restore white
+blocklight at an RGB volume boundary. Zero energy still preserves ordinary
+lighting; dim samples now fade continuously, without dividing RGB by tiny
+energy values. Pair it with Afterlight 0.5.2, which samples its transition time
+once per render frame so opaque and translucent passes agree. If asynchronous
+results arrive during a fade, the latest stays pending until the existing
+180 ms transition finishes, preventing a jump to an unseen endpoint.
+
+Regression coverage includes a static source beside an animated source,
+interrupted worker timing, camera-volume rebasing, and zero/minimum RGBA16F
+energy. Run `tools/lighting_temporal_test.py` with moderngl/NumPy on an offline
+EGL context, plus the Java tests and shader compilers above. These checks do not
+replace the player's in-game visual acceptance.

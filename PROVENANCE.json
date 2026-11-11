@@ -1,14 +1,14 @@
 {
-  "source_revision": "937092662ce1e35e5a27e527d0e9bfaea4812d57",
+  "source_revision": "4eaab9e22ce8a37c7f11a80bf2f9b59162377121",
   "snapshot_date": "2026-11-11",
   "project": "NoopsNet Afterlight",
   "artifacts": [
     {
-      "filename": "noopsnet-neon-neoforge-0.5.1.jar",
-      "version": "0.5.1",
+      "filename": "noopsnet-neon-neoforge-0.5.2.jar",
+      "version": "0.5.2",
       "hashes": {
-        "sha1": "4009c01360fe28f3959c48893c339918ca59a443",
-        "sha512": "7662255e042acea8bfe297052075d29868f1c6674526aa8bc4996c53499aa504323ffd0b404c639567af5651f4c630e0fc468abe7479ca74f4aa08a0e6774d99"
+        "sha1": "671611bfd2c45aad765618a0e71597874a811fb9",
+        "sha512": "e5c2a4daea1f12eca2c649dfb7bfc9cff4b227131416e35f108ad52ed2c25fbff0dc2d7ffd2880a23bbcacb5d3c44fa1ee04875a18d052a01bb4cb204240ef96"
       }
     }
   ]

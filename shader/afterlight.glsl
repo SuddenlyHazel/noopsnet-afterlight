@@ -26,15 +26,19 @@ vec3 afterlight_blocklight(vec3 scene_pos, vec3 normal, vec3 original, float van
         vec4 previous = afterlight_sample(afterlightPreviousVolume, afterlightPreviousOrigin, afterlightPreviousSize, position);
         light = mix(previous, light, afterlightVolumeBlend);
     }
-    if (light.a < 0.0001) return original;
-    vec3 hue = light.rgb / light.a;
+    // Coverage has a fractional-power falloff: even tiny energy can replace a
+    // visible share of vanilla light. A nonzero cutoff makes that share pop at
+    // volume edges, so only skip an exactly empty sample.
+    if (light.a <= 0.0) return original;
     // Replace the matching share of white blocklight; retain sunlight, skylight,
     // and unrelated torches. Add radiance so low-lightmap surfaces still receive spill.
     float coverage = clamp(pow(light.a, 1.0 / 2.2) / max(vanilla_level, 0.05), 0.0, 1.0);
-    vec3 colored = hue * rec709_to_working_color;
-    float energy = min(light.a, 2.0);
+    // RGB already contains energy. Avoid dividing dim samples by tiny alpha;
+    // the only division is the bounded rescale for overlapping bright sources.
+    vec3 colored = light.rgb * rec709_to_working_color;
+    float energy_scale = 2.0 / max(light.a, 2.0);
     // Absolute irradiance: dim/white LEDs must not inherit vanilla/AO brightness
     // fluctuations through the old dot(original, luminance_weights) multiplier.
-    return original * (1.0 - coverage) + colored * energy * 6.0 * BLOCKLIGHT_I;
+    return original * (1.0 - coverage) + colored * energy_scale * 6.0 * BLOCKLIGHT_I;
 }
 #endif
