@@ -13,7 +13,8 @@ carry that unchanged artwork with attribution to NoopsNet. This artwork permissi
 does not relicense third-party artwork or grant rights to claim official endorsement.
 NoopsNet names and branding are not a grant of trademark rights.
 
-Third-party dependencies are not relicensed or bundled as source here. Minecraft,
+Except for the Photon source identified below, third-party dependencies are not
+relicensed or bundled as source here. Minecraft,
 NeoForge, Fabric, Iris, Flan and Xaero projects retain their respective licenses.
 The Gradle wrapper retains its Apache-2.0 notices.
 
