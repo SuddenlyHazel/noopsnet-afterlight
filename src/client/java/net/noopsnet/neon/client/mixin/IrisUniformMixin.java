@@ -3,7 +3,9 @@ package net.noopsnet.neon.client.mixin;
 
 import net.irisshaders.iris.gl.uniform.UniformHolder;
 import net.irisshaders.iris.gl.uniform.UniformUpdateFrequency;
+import net.noopsnet.neon.client.AfterlightAtmosphere;
 import net.noopsnet.neon.client.AfterlightLighting;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,13 +16,59 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(targets = "net.irisshaders.iris.uniforms.CommonUniforms", remap = false)
 public abstract class IrisUniformMixin {
     @Inject(method = "addNonDynamicUniforms", at = @At("TAIL"), remap = false)
-    private static void afterlight$uniforms(UniformHolder uniforms, net.irisshaders.iris.shaderpack.IdMap ids,
+    private static void afterlight$uniforms(
+            UniformHolder uniforms,
+            net.irisshaders.iris.shaderpack.IdMap ids,
             net.irisshaders.iris.shaderpack.properties.PackDirectives directives,
-            net.irisshaders.iris.uniforms.FrameUpdateNotifier notifier, CallbackInfo ci) {
-        uniforms.uniform3f(UniformUpdateFrequency.PER_FRAME, "afterlightVolumeOrigin", AfterlightLighting::origin);
-        uniforms.uniform3f(UniformUpdateFrequency.PER_FRAME, "afterlightVolumeSize", AfterlightLighting::size);
-        uniforms.uniform3f(UniformUpdateFrequency.PER_FRAME, "afterlightPreviousOrigin", AfterlightLighting::previousOrigin);
-        uniforms.uniform3f(UniformUpdateFrequency.PER_FRAME, "afterlightPreviousSize", AfterlightLighting::previousSize);
-        uniforms.uniform1f(UniformUpdateFrequency.PER_FRAME, "afterlightVolumeBlend", (java.util.function.DoubleSupplier) AfterlightLighting::blend);
+            net.irisshaders.iris.uniforms.FrameUpdateNotifier notifier,
+            CallbackInfo ci) {
+        uniforms.uniform3f(
+                UniformUpdateFrequency.PER_FRAME,
+                "afterlightFogOrigin",
+                AfterlightAtmosphere::origin);
+        uniforms.uniform3f(
+                UniformUpdateFrequency.PER_FRAME,
+                "afterlightFogPreviousOrigin",
+                AfterlightAtmosphere::previousOrigin);
+        uniforms.uniform3f(
+                UniformUpdateFrequency.PER_FRAME, "afterlightFogSize", AfterlightAtmosphere::size);
+        uniforms.uniform3f(
+                UniformUpdateFrequency.PER_FRAME,
+                "afterlightFogPreviousSize",
+                AfterlightAtmosphere::previousSize);
+        uniforms.uniform3f(
+                UniformUpdateFrequency.PER_FRAME,
+                "afterlightFogBeamOrigin",
+                AfterlightAtmosphere::beamOrigin);
+        uniforms.uniform1f(
+                UniformUpdateFrequency.PER_FRAME,
+                "afterlightFogBlend",
+                (java.util.function.DoubleSupplier) AfterlightAtmosphere::blend);
+        uniforms.uniform1i(
+                UniformUpdateFrequency.PER_FRAME,
+                "afterlightFogBeamCount",
+                AfterlightAtmosphere::beamCount);
+        uniforms.uniform1f(
+                UniformUpdateFrequency.PER_FRAME,
+                "afterlightFogDensity",
+                (java.util.function.DoubleSupplier) AfterlightAtmosphere::fogDensity);
+        uniforms.uniform3f(
+                UniformUpdateFrequency.PER_FRAME,
+                "afterlightVolumeOrigin",
+                AfterlightLighting::origin);
+        uniforms.uniform3f(
+                UniformUpdateFrequency.PER_FRAME, "afterlightVolumeSize", AfterlightLighting::size);
+        uniforms.uniform3f(
+                UniformUpdateFrequency.PER_FRAME,
+                "afterlightPreviousOrigin",
+                AfterlightLighting::previousOrigin);
+        uniforms.uniform3f(
+                UniformUpdateFrequency.PER_FRAME,
+                "afterlightPreviousSize",
+                AfterlightLighting::previousSize);
+        uniforms.uniform1f(
+                UniformUpdateFrequency.PER_FRAME,
+                "afterlightVolumeBlend",
+                (java.util.function.DoubleSupplier) AfterlightLighting::blend);
     }
 }

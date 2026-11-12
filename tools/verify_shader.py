@@ -20,9 +20,9 @@ def main():
             return re.sub(r'^\s*#include "([^"]+)"',lambda m:expand('shaders'+m[1] if m[1].startswith('/') else posixpath.normpath(posixpath.join(posixpath.dirname(path),m[1]))),source,flags=re.M)
         # Opaque deferred lighting and forward translucent/DH lighting all use the bridge.
         for world in ('world0','world-1','world1'):
-            for name in ('deferred4.fsh','gbuffers_water.fsh','dh_water.fsh','dh_terrain.fsh','gbuffers_spidereyes.fsh','gbuffers_block.fsh','gbuffers_particles_translucent.fsh','gbuffers_textured.fsh'):
+            for name in ('composite.fsh','deferred4.fsh','gbuffers_water.fsh','dh_water.fsh','dh_terrain.fsh','gbuffers_spidereyes.fsh','gbuffers_block.fsh','gbuffers_particles_translucent.fsh','gbuffers_textured.fsh'):
                 path=f'shaders/{world}/{name}';source=expand(path)
-                assert name in ('dh_terrain.fsh','gbuffers_spidereyes.fsh','gbuffers_block.fsh') or source.count('lighting = afterlight_blocklight')==1
+                assert name in ('composite.fsh','dh_terrain.fsh','gbuffers_spidereyes.fsh','gbuffers_block.fsh') or source.count('lighting = afterlight_blocklight')==1
                 # Iris supplies these macros and performs C-preprocessor line splicing.
                 source=source.replace('#version 400 compatibility','#version 400 compatibility\n#define IS_IRIS\n#define MC_HAND_DEPTH 0.125\n#define MC_SHADOW_QUALITY 1.0\n#define MC_VERSION 12101\n#define DISTANT_HORIZONS').replace('\\\n','')
                 target=out/f'{world}-{name}';target.write_text(source)

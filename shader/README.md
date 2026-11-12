@@ -14,7 +14,7 @@ for player-selected RGB spill. The shader continues to render without the mod
 using ordinary block lighting. Distant Horizons is supported by Photon; Afterlight
 lighting covers nearby full-detail blocks, not distant terrain meshes.
 
-The 48-block volume updates at most four times per second, tracks the nearest
+The 64-block volume updates at most four times per second, tracks the nearest
 96 active placed Afterlight sources, and floods through loaded blocks with
 Minecraft opacity attenuation. Closed opaque walls block it; light can travel
 around corners and through doorways. Thin non-opaque shapes use Minecraft's
@@ -92,3 +92,41 @@ interrupted worker timing, camera-volume rebasing, and zero/minimum RGBA16F
 energy. Run `tools/lighting_temporal_test.py` with moderngl/NumPy on an offline
 EGL context, plus the Java tests and shader compilers above. These checks do not
 replace the player's in-game visual acceptance.
+
+
+## Devo room mist
+
+The paired devo Soundstage/Afterlight candidate adds local room mist to Photon's
+existing volumetric pass and depth-aware reconstruction. `afterlight_fog.glsl`
+uses a bounded air-space density field, 64 raymarch steps maximum, analytic
+laser scattering and shared spotlight transport. The normal global weather/water
+fog remains in Photon. The runtime field and beam samplers are optional Iris
+uniforms registered by Afterlight; without the matching mod their zero-sized
+volume contributes no fog. This derivative remains subject to PHOTON-LICENSE.
+
+The current devo spotlight model shares `afterlight_spotlight.glsl` between
+surface shading and fog. Lights illuminate terrain and entities without haze;
+Photon applies the material's albedo and diffuse response. The source has a
+continuous angular profile, bounded inverse-square falloff and a soft far end.
+There is no opaque cone mesh or arbitrary spotlight saturation cap.
+
+Both paths traverse the same current obstacle voxels and attenuate light through
+the mean fog density. Fog also attenuates the path toward the camera and uses a
+normalized Henyey–Greenstein phase. Fine world-space wisps modulate scattering,
+but do not animate the source-to-surface shadow. A centerline obstruction no
+longer shortens the whole cone: light can pass beside a pillar while casting its
+shadow. Surface receivers use a small geometric-normal bias to avoid self-shadow.
+
+The 64³ snapshot updates at most four times per second, density transitions last
+180 ms, and GPU work is capped at eight combined stage/laser sources. Geometry
+is conservative at Minecraft block resolution; partial blocks and sealed glass
+can cast whole-block shadows. Entities receive the diffuse lighting but do not
+cast voxel shadows, and this does not add spotlight specular reflections.
+
+**Esc → Soundstage settings** exposes personal fog density from 0–200%. Turning
+fog off preserves surface lighting and shadows. Brightness changes the lights
+without changing the amount emitted by fog machines.
+
+See [the static-image shader bench](../tools/shader-bench.md) for reproducible
+images and independent transport checks. These synthetic native-GLSL renders
+do not replace validation of the complete Minecraft/Iris/Photon pipeline.

@@ -11,6 +11,10 @@ The shader README describes behavior and validation. NoopsNet adaptations:
 - Preserve the pinned version's matrix SH representation and overlay behavior.
 - Use `afterlightGalaxy` on Mac instead of aliasing the intermediate shadow buffer.
 - Budget both custom RGB textures, including the DH compatibility fallback.
+- Share the spotlight model with fog and surfaces. On Mac the existing shadow
+  pass carries spotlight surface radiance through colortex0 into the lighting
+  pass, keeping the three transport samplers out of the full lighting pass.
+- Apply the same split in the Nether to retain the 13-unit Iris budget.
 - Compile out unreachable reflection sampling when environment reflections are off.
 - Fix quality-profile AO names and missing rain uniforms.
 

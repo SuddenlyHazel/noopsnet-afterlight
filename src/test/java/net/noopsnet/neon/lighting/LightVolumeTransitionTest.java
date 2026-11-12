@@ -1,15 +1,19 @@
 // SPDX-License-Identifier: MPL-2.0
 package net.noopsnet.neon.lighting;
 
-import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
+
+import org.junit.jupiter.api.Test;
 
 class LightVolumeTransitionTest {
     private static RgbLightVolume.Result volume(float liveRed, float liveBlue) {
         // Constant green fixture beside a red/blue animated fixture; equal reach.
         float[] rgba = new float[2 * 2 * 2 * 4];
         for (int i = 0; i < rgba.length; i += 4) {
-            rgba[i] = liveRed; rgba[i + 1] = .25f; rgba[i + 2] = liveBlue; rgba[i + 3] = 1.25f;
+            rgba[i] = liveRed;
+            rgba[i + 1] = .25f;
+            rgba[i + 2] = liveBlue;
+            rgba[i + 3] = 1.25f;
         }
         return new RgbLightVolume.Result(2, 0, 0, 0, rgba);
     }
@@ -19,7 +23,8 @@ class LightVolumeTransitionTest {
         return previous + (transition.current().rgba()[index] - previous) * transition.blend();
     }
 
-    @Test void workerBurstsCannotInterruptTheDisplayedMixtureOrChangeTheStaticLight() {
+    @Test
+    void workerBurstsCannotInterruptTheDisplayedMixtureOrChangeTheStaticLight() {
         var transition = new LightVolumeTransition();
         long now = 1_000_000_000L;
         transition.accept(volume(1, 0), now);
@@ -44,7 +49,8 @@ class LightVolumeTransitionTest {
         assertEquals(.25, channel(transition, 1), 1e-8);
     }
 
-    @Test void everyProgramUsesTheSameFrameTimeAndWorldChangesDiscardBothVolumes() {
+    @Test
+    void everyProgramUsesTheSameFrameTimeAndWorldChangesDiscardBothVolumes() {
         var transition = new LightVolumeTransition();
         long now = 1_000_000_000L;
         transition.accept(volume(1, 0), now);

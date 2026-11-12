@@ -13,7 +13,8 @@
 
   deferred4 (D4_PASS_SHADOWS):  filter shadows -> colortex13 (rgb: shadows,
                                 a: sss depth); draw galaxy, skytextured
-                                output and stars -> colortex0 (sky only)
+                                output and stars -> colortex0 (sky),
+                                stage surface lighting -> colortex0 (terrain)
   deferred5 (D4_PASS_LIGHTING): diffuse lighting + specular highlight ->
                                 colortex0 (terrain only)
   deferred6 (D4_PASS_COMPOSE):  sky, reflections, fog and clouds on top of
@@ -35,7 +36,7 @@
 
 // deferred5/deferred6 define D4_PASS before including this file
 #if !defined D4_PASS
-#if defined APPLE_COMPAT && !defined WORLD_NETHER
+#if defined APPLE_COMPAT
 #define D4_PASS D4_PASS_SHADOWS
 #else
 #define D4_PASS D4_PASS_FULL

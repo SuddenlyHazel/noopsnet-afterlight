@@ -8,17 +8,20 @@ import java.util.List;
 /** Immutable world snapshots in, linear RGB + energy voxels out. Alpha -1 marks opaque cells. */
 public final class RgbLightVolume {
     public record Source(int x, int y, int z, int rgb, int level) {}
+
     public record Result(int size, int x, int y, int z, float[] rgba) {}
 
     private RgbLightVolume() {}
 
-    public static Result build(int size, int ox, int oy, int oz, byte[] opacity, List<Source> sources) {
+    public static Result build(
+            int size, int ox, int oy, int oz, byte[] opacity, List<Source> sources) {
         if (size < 2 || size > 64 || opacity.length != size * size * size || sources.size() > 96)
             throw new IllegalArgumentException("Unbounded lighting snapshot");
         int count = opacity.length, plane = size * size;
         float[] rgba = new float[count * 4];
         byte[] reached = new byte[count];
-        @SuppressWarnings("unchecked") ArrayDeque<Integer>[] buckets = new ArrayDeque[16];
+        @SuppressWarnings("unchecked")
+        ArrayDeque<Integer>[] buckets = new ArrayDeque[16];
         for (int i = 0; i < 16; i++) buckets[i] = new ArrayDeque<>();
         for (Source source : sources) {
             int x = source.x - ox, y = source.y - oy, z = source.z - oz;
@@ -28,7 +31,9 @@ public final class RgbLightVolume {
             int seed = x + size * y + plane * z;
             reached[seed] = (byte) level;
             buckets[level].add(seed);
-            float r = linear(source.rgb >> 16 & 255), g = linear(source.rgb >> 8 & 255), b = linear(source.rgb & 255);
+            float r = linear(source.rgb >> 16 & 255),
+                    g = linear(source.rgb >> 8 & 255),
+                    b = linear(source.rgb & 255);
             for (int light = level; light > 0; light--) {
                 var bucket = buckets[light];
                 while (!bucket.isEmpty()) {
@@ -36,7 +41,10 @@ public final class RgbLightVolume {
                     if (reached[index] != light) continue;
                     float weight = (float) Math.pow(light / 15.0, 2.2);
                     int p = index * 4;
-                    rgba[p] += r * weight; rgba[p + 1] += g * weight; rgba[p + 2] += b * weight; rgba[p + 3] += weight;
+                    rgba[p] += r * weight;
+                    rgba[p + 1] += g * weight;
+                    rgba[p + 2] += b * weight;
+                    rgba[p + 3] += weight;
                     int px = index % size, py = index / size % size, pz = index / plane;
                     if (px > 0) spread(index - 1, light, opacity, reached, buckets);
                     if (px + 1 < size) spread(index + 1, light, opacity, reached, buckets);
@@ -56,7 +64,8 @@ public final class RgbLightVolume {
         return new Result(size, ox, oy, oz, rgba);
     }
 
-    private static void spread(int index, int light, byte[] opacity, byte[] reached, ArrayDeque<Integer>[] buckets) {
+    private static void spread(
+            int index, int light, byte[] opacity, byte[] reached, ArrayDeque<Integer>[] buckets) {
         int next = light - Math.max(1, opacity[index] & 255);
         if (next > reached[index]) {
             reached[index] = (byte) next;

@@ -20,6 +20,10 @@
     "shaders/world1/deferred5.vsh": null,
     "shaders/world1/deferred6.fsh": null,
     "shaders/world1/deferred6.vsh": null,
-    "shaders/include/lighting/specular_lighting.glsl": "dd55a856ea241d6d32bb45dcd1fc6e98427ff035288b0e9be91abe0418ed9167"
+    "shaders/include/lighting/specular_lighting.glsl": "dd55a856ea241d6d32bb45dcd1fc6e98427ff035288b0e9be91abe0418ed9167",
+    "shaders/world-1/deferred5.vsh": null,
+    "shaders/world-1/deferred5.fsh": null,
+    "shaders/world-1/deferred6.vsh": null,
+    "shaders/world-1/deferred6.fsh": null
   }
 }

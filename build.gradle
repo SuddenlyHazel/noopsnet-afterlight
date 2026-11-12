@@ -20,6 +20,19 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
     testImplementation 'org.ow2.asm:asm-tree:9.8'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+    testImplementation 'org.lwjgl:lwjgl-egl:3.3.3'
+    if (System.getProperty('os.name').toLowerCase().contains('linux')) {
+        testRuntimeOnly 'org.lwjgl:lwjgl:3.3.3:natives-linux'
+        testRuntimeOnly 'org.lwjgl:lwjgl-opengl:3.3.3:natives-linux'
+    }
+}
+sourceSets.test.compileClasspath += sourceSets.client.output + sourceSets.client.compileClasspath
+tasks.register('verifyTextureUploads', JavaExec) {
+    group = 'verification'
+    description = 'Round-trip the production uploads on a headless EGL context (Linux).'
+    dependsOn tasks.named('testClasses'), tasks.named('compileClientJava')
+    classpath = sourceSets.test.runtimeClasspath + sourceSets.client.output + sourceSets.client.compileClasspath
+    mainClass = 'net.noopsnet.neon.lighting.TextureUploadGpuCheck'
 }
 tasks.named('test') {
     useJUnitPlatform()
@@ -105,7 +118,7 @@ tasks.register('verifyGameTests') {
     dependsOn tasks.named('runGameTestServer')
     doLast {
         def log = file('run/logs/latest.log')
-        if (!log.exists() || !log.text.contains('All 10 required tests passed'))
+        if (!log.exists() || !log.text.contains('All 13 required tests passed'))
             throw new GradleException('Afterlight native GameTests did not all pass; inspect run/logs/latest.log')
     }
 }

@@ -4,6 +4,6 @@
   "package": "net.noopsnet.neon.client.mixin",
   "plugin": "net.noopsnet.neon.client.mixin.IrisCompatPlugin",
   "compatibilityLevel": "JAVA_21",
-  "client": ["IrisSamplerMixin", "IrisUniformMixin", "IrisParticleMixin"],
+  "client": ["IrisSamplerMixin", "IrisUniformMixin", "IrisParticleMixin", "LightingChunkMixin", "LightingChunkSourceMixin"],
   "injectors": {"defaultRequire": 1}
 }

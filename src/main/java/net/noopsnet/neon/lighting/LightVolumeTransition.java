@@ -18,7 +18,9 @@ public final class LightVolumeTransition {
         blend = current == null ? 1 : Math.clamp((now - started) / (double) DURATION_NS, 0, 1);
     }
 
-    public boolean canAccept() { return blend == 1; }
+    public boolean canAccept() {
+        return blend == 1;
+    }
 
     /** Keep an in-flight fade intact; its endpoint must become visible before reuse. */
     public void accept(RgbLightVolume.Result next, long now) {
@@ -29,7 +31,15 @@ public final class LightVolumeTransition {
         blend = 0;
     }
 
-    public RgbLightVolume.Result current() { return current; }
-    public RgbLightVolume.Result previous() { return previous; }
-    public double blend() { return blend; }
+    public RgbLightVolume.Result current() {
+        return current;
+    }
+
+    public RgbLightVolume.Result previous() {
+        return previous;
+    }
+
+    public double blend() {
+        return blend;
+    }
 }

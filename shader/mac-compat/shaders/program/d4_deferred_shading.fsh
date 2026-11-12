@@ -633,7 +633,11 @@ void main() {
 
 #if D4_PASS == D4_PASS_SHADOWS
         shadow_data = vec4(shadows, sss_depth);
-        fragment_color = vec3(0.0);
+        // Reuse this pass's terrain color output for stage illumination. It
+        // has three spare samplers; the following lighting pass is at its
+        // texture-unit limit and already reads colortex0 for the sky.
+        fragment_color = afterlight_spot_irradiance(position_scene + flat_normal * 0.03, normal)
+            * material.albedo * rcp_pi * mix(1.0, metal_diffuse_amount, float(material.is_metal));
 #else
         // Diffuse lighting
 
@@ -666,6 +670,10 @@ void main() {
         );
 
         // Specular highlight
+
+#if D4_PASS == D4_PASS_LIGHTING
+        fragment_color += texelFetch(colortex0, texel, 0).rgb;
+#endif
 
 #if defined WORLD_OVERWORLD || defined WORLD_END
         fragment_color

@@ -215,6 +215,7 @@ def iris_budget(prog, samplers, iris):
 
 
 def main():
+    global MAX_SAMPLERS
     ap = argparse.ArgumentParser()
     ap.add_argument("--profile", default=None)
     ap.add_argument("--shader-dir", help="Inspect an extracted pack instead of building")
@@ -222,12 +223,16 @@ def main():
     ap.add_argument("--dh", action="store_true")
     ap.add_argument("--world", action="append")
     ap.add_argument("--no-mac", action="store_true")
+    ap.add_argument("--max-samplers", type=int, default=16, help="Measured per-stage GPU limit for --no-mac; macOS stays at 16")
     ap.add_argument("-v", action="store_true")
     ap.add_argument("--dump")
     ap.add_argument("--mc", type=int, default=12101, help="MC_VERSION, e.g. 12001 = 1.20.1")
     ap.add_argument("--iris", choices=["legacy", "latest"], default="legacy",
                     help="legacy = Iris 1.7.x (MC 1.20.1), latest = Iris 1.9+")
     a = ap.parse_args()
+    if a.max_samplers < 16 or (not a.no_mac and a.max_samplers != 16):
+        ap.error("macOS requires 16; desktop limits must be at least 16")
+    MAX_SAMPLERS = a.max_samplers
 
     global ROOT
     scratch = tempfile.TemporaryDirectory(prefix="afterlight-shader-check-")
