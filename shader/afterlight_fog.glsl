@@ -8,8 +8,10 @@ vec4 afterlight_mist(vec3 pos) {
     // Fine wisps modulate local scattering; the shared transport grid carries
     // mean density so small animated noise does not shimmer surface shadows.
     vec3 world=pos+cameraPosition;
-    float noise=texture(colortex0,world*0.045+frameTimeCounter*vec3(0.003,0.0008,0.001)).r;
-    mist.a*=0.65+0.70*noise;
+    float billow=texture(colortex0,world*0.13-frameTimeCounter*vec3(0.021,0.008,0.014)).r;
+    float wisp=texture(colortex0,world*0.43-frameTimeCounter*vec3(0.075,0.020,0.047)).r;
+    // Broader contrast and two scales make movement readable without more raymarch steps.
+    mist.a*=0.35+1.30*mix(billow,wisp,0.35);
     return mist;
 }
 vec3 afterlight_spot_scattering(vec3 pos, vec3 view_dir) {

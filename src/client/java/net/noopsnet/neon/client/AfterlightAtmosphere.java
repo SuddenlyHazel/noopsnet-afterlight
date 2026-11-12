@@ -47,10 +47,10 @@ public final class AfterlightAtmosphere {
     private static long lastCue, lastBound, lingerUntil, lastSimulation;
     private static int ticks, front, beamTexture, beamCount;
     private static double bx, by, bz;
-    private static double fogDensity = 1.0;
+    private static double fogDensity = FogDensityScale.BASELINE;
 
     public static void setFogDensity(double value) {
-        fogDensity = Double.isFinite(value) ? Math.clamp(value, 0.0, 2.0) : 1.0;
+        fogDensity = FogDensityScale.opticalMultiplier(value);
     }
 
     public static double fogDensity() {
@@ -59,6 +59,15 @@ public final class AfterlightAtmosphere {
 
     /** 5 doubles per emitter: world XYZ, power, spread. 16 per beam (shader layout). */
     public static boolean submit(double[] fog, double[] lightBeams) {
+        return submit(fog, lightBeams, false);
+    }
+
+    /** Direction-aware records: XYZ, power, spread, horizontal nozzle direction XZ. */
+    public static boolean submitDirected(double[] fog, double[] lightBeams) {
+        return submit(fog, lightBeams, true);
+    }
+
+    private static boolean submit(double[] fog, double[] lightBeams, boolean directed) {
         long now = System.nanoTime();
         lastCue = now;
         var currentLevel = Minecraft.getInstance().level;
@@ -66,9 +75,9 @@ public final class AfterlightAtmosphere {
             EMITTER_AGES.clear();
             emitterLevel = currentLevel;
         }
-        var next = EMITTER_AGES.update(fog, now);
+        var next = directed ? EMITTER_AGES.updateDirected(fog, now) : EMITTER_AGES.update(fog, now);
         emitters = next;
-        if (!next.isEmpty()) lingerUntil = now + 38_000_000_000L;
+        if (!next.isEmpty()) lingerUntil = now + 90_000_000_000L;
         beams = Arrays.copyOf(lightBeams, Math.min(MAX_BEAMS * 16, lightBeams.length / 16 * 16));
         for (double value : beams)
             if (!Double.isFinite(value)) {

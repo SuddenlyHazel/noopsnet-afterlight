@@ -124,3 +124,9 @@ tasks.register('verifyGameTests') {
 }
 
 tasks.named('jar') { from('LICENSE'); from('NOTICE.md') }
+
+tasks.register('fogPlumePreview', JavaExec) {
+    dependsOn testClasses
+    classpath = sourceSets.test.runtimeClasspath
+    mainClass = 'net.noopsnet.neon.lighting.FogPlumePreview'
+}
